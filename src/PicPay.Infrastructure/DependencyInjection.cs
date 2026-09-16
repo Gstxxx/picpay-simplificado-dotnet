@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PicPay.Application.Abstractions;
+using PicPay.Infrastructure.Auth;
 using PicPay.Infrastructure.Persistence;
+using PicPay.Infrastructure.Persistence.Repositories;
 
 namespace PicPay.Infrastructure;
 
@@ -9,12 +12,22 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Postgres")
-            ?? throw new InvalidOperationException("Connection string 'Postgres' is missing.");
-
-        services.AddDbContext<AppDbContext>(options => options
-            .UseNpgsql(connectionString)
+        services.AddDbContext<AppDbContext>((sp, options) => options
+            .UseNpgsql(sp.GetRequiredService<IConfiguration>().GetConnectionString("Postgres")
+                ?? throw new InvalidOperationException("Connection string 'Postgres' is missing."))
             .UseSnakeCaseNamingConvention());
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
+        services.AddSingleton<ITokenService, JwtTokenService>();
 
         return services;
     }
