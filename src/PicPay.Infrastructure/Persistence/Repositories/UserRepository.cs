@@ -16,4 +16,23 @@ internal sealed class UserRepository(AppDbContext db) : IUserRepository
         db.Users.AnyAsync(u => u.Email == email || u.Document == document, ct);
 
     public void Add(User user) => db.Users.Add(user);
+
+    public async Task<bool> TryDebitAsync(Guid userId, decimal amount, CancellationToken ct)
+    {
+        var affected = await db.Users
+            .Where(u => u.Id == userId && u.Balance >= amount)
+            .ExecuteUpdateAsync(s => s.SetProperty(u => u.Balance, u => u.Balance - amount), ct);
+
+        return affected == 1;
+    }
+
+    public async Task CreditAsync(Guid userId, decimal amount, CancellationToken ct)
+    {
+        var affected = await db.Users
+            .Where(u => u.Id == userId)
+            .ExecuteUpdateAsync(s => s.SetProperty(u => u.Balance, u => u.Balance + amount), ct);
+
+        if (affected != 1)
+            throw new InvalidOperationException($"User {userId} not found while crediting.");
+    }
 }

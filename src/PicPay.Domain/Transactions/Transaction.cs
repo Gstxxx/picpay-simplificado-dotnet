@@ -16,7 +16,7 @@ public sealed class Transaction
         PayeeId = payeeId;
         Value = value;
         IdempotencyKey = idempotencyKey;
-        CreatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = SystemTime.UtcNow();
     }
 
     public Guid Id { get; private set; }

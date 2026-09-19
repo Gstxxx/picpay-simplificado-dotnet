@@ -12,7 +12,7 @@ public sealed class User
         Email = email.ToLowerInvariant();
         PasswordHash = passwordHash;
         Type = type;
-        CreatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = SystemTime.UtcNow();
     }
 
     public Guid Id { get; private set; }

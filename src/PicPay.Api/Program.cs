@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PicPay.Api.Endpoints;
 using PicPay.Api.Infrastructure;
 using PicPay.Application;
+using PicPay.Application.Abstractions;
 using PicPay.Infrastructure;
 using PicPay.Infrastructure.Persistence;
 
@@ -20,7 +21,11 @@ var app = builder.Build();
 if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 {
     await using var scope = app.Services.CreateAsyncScope();
-    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+
+    if (app.Configuration.GetValue<bool>("Database:Seed"))
+        await DevelopmentSeeder.SeedAsync(db, scope.ServiceProvider.GetRequiredService<IPasswordHasher>());
 }
 
 app.UseExceptionHandler();
@@ -31,6 +36,7 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapTransferEndpoints();
 
 app.Run();
 

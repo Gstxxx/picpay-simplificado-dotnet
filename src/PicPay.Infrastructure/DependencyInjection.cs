@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PicPay.Application.Abstractions;
 using PicPay.Infrastructure.Auth;
+using PicPay.Infrastructure.Http;
 using PicPay.Infrastructure.Persistence;
 using PicPay.Infrastructure.Persistence.Repositories;
 
@@ -19,6 +20,8 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<INotificationOutboxRepository, NotificationOutboxRepository>();
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.Section))
@@ -28,6 +31,8 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
         services.AddSingleton<ITokenService, JwtTokenService>();
+
+        services.AddResilientClient<IPaymentAuthorizer, HttpPaymentAuthorizer, AuthorizerOptions>(AuthorizerOptions.Section);
 
         return services;
     }

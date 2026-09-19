@@ -11,7 +11,7 @@ public sealed class NotificationOutbox
         Recipient = recipient;
         Message = message;
         Status = NotificationStatus.Pending;
-        CreatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = SystemTime.UtcNow();
         NextAttemptAt = CreatedAt;
     }
 
