@@ -15,5 +15,21 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build: .
+    profiles: ["app"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=picpay;Username=picpay;Password=picpay
+      Database__MigrateOnStartup: "true"
+      Database__Seed: "true"
+      Swagger__Enabled: "true"
+      Jwt__Secret: ${JWT_SECRET:-compose-secret-change-me-0123456789abcdef}
+    ports:
+      - "8080:8080"
+
 volumes:
   pgdata:

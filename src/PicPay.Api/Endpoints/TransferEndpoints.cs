@@ -43,6 +43,7 @@ public static class TransferEndpoints
 
                 return Results.Created($"/transfer/{transfer.Id}", transfer);
             })
+            .RequireRateLimiting(RateLimitingSetup.TransferPolicy)
             .WithValidation<TransferRequest>()
             .Produces<TransferResponse>(StatusCodes.Status201Created)
             .Produces<TransferResponse>()
