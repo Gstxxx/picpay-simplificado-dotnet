@@ -30,7 +30,9 @@ internal static class ResilientHttpClientExtensions
             var attemptTimeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
 
             resilience.AttemptTimeout.Timeout = attemptTimeout;
-            resilience.Retry.MaxRetryAttempts = options.MaxRetries;
+            resilience.Retry.MaxRetryAttempts = Math.Max(1, options.MaxRetries);
+            if (options.MaxRetries == 0)
+                resilience.Retry.ShouldHandle = _ => ValueTask.FromResult(false);
             resilience.Retry.Delay = TimeSpan.FromMilliseconds(options.RetryDelayMilliseconds);
             resilience.Retry.BackoffType = DelayBackoffType.Exponential;
             resilience.Retry.UseJitter = true;
