@@ -5,4 +5,8 @@
     <Project Path="src/PicPay.Domain/PicPay.Domain.csproj" />
     <Project Path="src/PicPay.Infrastructure/PicPay.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PicPay.IntegrationTests/PicPay.IntegrationTests.csproj" />
+    <Project Path="tests/PicPay.UnitTests/PicPay.UnitTests.csproj" />
+  </Folder>
 </Solution>
