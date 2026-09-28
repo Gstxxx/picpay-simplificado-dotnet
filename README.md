@@ -1,7 +1,5 @@
 # PicPay Simplificado (.NET)
 
-[![CI](https://github.com/Gstxxx/picpay-simplificado-dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/Gstxxx/picpay-simplificado-dotnet/actions/workflows/ci.yml)
-
 Port para **.NET 10** do meu [picpay-simplificado em TypeScript](https://github.com/Gstxxx/picpay-simplificado): uma API de transferências entre usuários comuns e lojistas, com autorização externa, idempotência, notificação assíncrona via outbox e testes de integração contra Postgres real.
 
 O objetivo foi mostrar domínio da plataforma .NET usando as peças padrão do ecossistema, sem bibliotecas exóticas, e corrigir dois bugs que encontrei relendo a versão original.
